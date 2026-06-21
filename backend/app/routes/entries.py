@@ -54,7 +54,7 @@ async def save_entry(request: Request, body: SaveEntryRequest) -> SaveEntryRespo
                 insights=body.insights,
                 db_url=settings.SUPABASE_DB_URL,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.warning(
                 "Supabase save failed: %s. Falling back to in-memory store.", e
             )
@@ -102,7 +102,7 @@ async def get_entries(
                 limit=limit,
                 db_url=settings.SUPABASE_DB_URL,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.warning(
                 "Supabase get_history failed: %s. Falling back to in-memory store.", e
             )

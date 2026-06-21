@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 from functools import lru_cache
+from typing import Any
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -73,13 +74,13 @@ class Settings(BaseSettings):
                     host_part, db_part = rest.rsplit("/", 1)
                 else:
                     host_part, db_part = rest, ""
-                
+
                 # Split host/port from user/pass (last @ symbol)
                 if "@" in host_part:
                     user_pass, host_port = host_part.rsplit("@", 1)
                 else:
                     return v  # No userinfo part
-                
+
                 # Split user and password (first : symbol in userinfo)
                 if ":" in user_pass:
                     user, password = user_pass.split(":", 1)
@@ -88,12 +89,12 @@ class Settings(BaseSettings):
                     sanitized_user_pass = f"{user}:{encoded_password}"
                 else:
                     sanitized_user_pass = user_pass
-                    
+
                 sanitized_url = f"{scheme}://{sanitized_user_pass}@{host_port}"
                 if db_part:
                     sanitized_url = f"{sanitized_url}/{db_part}"
                 return sanitized_url
-            except Exception:
+            except Exception:  # noqa: BLE001
                 # Fallback to original if anything fails
                 return v
         return v
