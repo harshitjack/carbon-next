@@ -13,7 +13,9 @@ import type {
   InsightsResponse,
 } from '../types';
 
-const BASE_URL = '/api';
+// In production, VITE_API_URL should be set to the deployed backend URL (e.g. https://carbon-next-2.onrender.com)
+// In development, Vite's proxy forwards /api → localhost:8000
+const BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {

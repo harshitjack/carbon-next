@@ -70,16 +70,19 @@ app = FastAPI(
 )
 
 # ---------------------------------------------------------------------------
-# Middleware (order matters â€” outer middleware wraps inner)
+# Middleware (order matters — outer middleware wraps inner)
 # ---------------------------------------------------------------------------
 
-# 1. Security headers (outermost â€” applied to every response)
+# 1. Security headers (outermost — applied to every response)
 app.add_middleware(SecurityHeadersMiddleware)
 
-# 2. CORS â€” allow the Vite dev server in development
+# 2. CORS – allow the Vite dev server in development and production frontend
+_default_origins = "http://localhost:5173,http://localhost:3000"
+_allowed_origins = os.getenv("ALLOWED_ORIGINS", _default_origins).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=[o.strip() for o in _allowed_origins],
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
     max_age=3600,
