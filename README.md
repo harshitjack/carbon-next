@@ -1,12 +1,12 @@
-# ClimateIQ
+# CarbonNext
 
-![CI](https://github.com/AbhishekK7860/Promptwars-Challenge-3/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/harshitjack/carbon-next/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen)
 ![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-brightgreen)
 ![Stack](https://img.shields.io/badge/stack-FastAPI%20%7C%20React%20%7C%20Supabase-blue)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![React](https://img.shields.io/badge/react-18.3-61dafb)
-![Docker](https://img.shields.io/badge/deployment-Docker%20%7C%20Render-black)
+![Deployment](https://img.shields.io/badge/deployment-Render-black)
 
 > **Understand, Track, and Reduce** your personal carbon impact with AI-powered insights via OpenRouter.
 
@@ -14,54 +14,57 @@
 
 ## Live Demo
 
-Deployed as a single unified Docker service on Render. The FastAPI backend serves both the API and the compiled React SPA from the same container.
+| Service | URL |
+|---------|-----|
+| **Frontend** | https://carbon-next-3.onrender.com |
+| **Backend API** | https://carbon-next-2.onrender.com |
+| **API Docs** | https://carbon-next-2.onrender.com/api/docs |
+| **Health Check** | https://carbon-next-2.onrender.com/api/health |
 
 ---
 
 ## What It Does
 
-ClimateIQ implements the **Understand → Track → Reduce** lifecycle:
+CarbonNext implements the **Understand → Track → Reduce** lifecycle:
 
 | Pillar | What it does |
 |--------|-------------|
 | **Understand** | Users input transport, home energy, diet, and consumption data. The science-backed carbon engine returns a total in kg CO₂e with comparisons to the 4,000 kg global average and 2,000 kg Paris 1.5°C target. |
 | **Track** | Every calculation is persisted to Supabase PostgreSQL, keyed anonymously by device ID. A trend-line history chart shows progress over time and survives backend restarts. |
-| **Reduce** | OpenRouter (Gemini 2.5 Flash) generates 3 personalised, quantified reduction actions targeting the user's largest emission sources. A deterministic rule engine provides instant fallback if AI is unavailable. |
+| **Reduce** | OpenRouter (Gemini 2.0 Flash) generates 3 personalised, quantified reduction actions targeting the user's largest emission sources. A deterministic rule engine provides instant fallback if AI is unavailable. |
 
 ---
 
 ## Architecture
 
 ```
-Browser
+Browser (https://carbon-next-3.onrender.com)
     │
-    ├── / (React SPA)
-    │       Served as static files by FastAPI
-    │       Blueprint Grid UI · Bento Layout · Glassmorphism
-    │
-    └── /api/* (JSON API)
+    └── React SPA (Vite + TypeScript)
             │
-            ├── POST /api/calculate
-            │       Carbon Engine (pure Python)
-            │       Transport · Home · Diet · Consumption
-            │       → total_kg, breakdown, ranked_categories
-            │       → vs_global_average_pct, vs_paris_target_pct
-            │
-            ├── POST /api/insights
-            │       Security Checkpoint (PII scrubbing + injection detection)
-            │       → OpenRouter / Gemini 2.5 Flash (primary)
-            │       → Rule Engine (deterministic fallback)
-            │
-            ├── POST /api/entries
-            │       asyncpg → Supabase PostgreSQL (carbon_entries table)
-            │       Connection Pooler (IPv4, port 6543)
-            │
-            ├── GET  /api/entries/{device_id}
-            │       asyncpg ← Supabase PostgreSQL
-            │       Returns history ordered newest-first
-            │
-            └── GET  /api/health
-                    Returns service status map for all feature flags
+            └── VITE_API_URL → https://carbon-next-2.onrender.com
+                    │
+                    ├── POST /api/calculate
+                    │       Carbon Engine (pure Python)
+                    │       Transport · Home · Diet · Consumption
+                    │       → total_kg, breakdown, ranked_categories
+                    │       → vs_global_average_pct, vs_paris_target_pct
+                    │
+                    ├── POST /api/insights
+                    │       Security Checkpoint (PII scrubbing + injection detection)
+                    │       → OpenRouter / Gemini 2.0 Flash (primary)
+                    │       → Rule Engine (deterministic fallback)
+                    │
+                    ├── POST /api/entries
+                    │       asyncpg → Supabase PostgreSQL (carbon_entries table)
+                    │       Connection Pooler (IPv4, port 6543)
+                    │
+                    ├── GET  /api/entries/{device_id}
+                    │       asyncpg ← Supabase PostgreSQL
+                    │       Returns history ordered newest-first
+                    │
+                    └── GET  /api/health
+                            Returns service status map for all feature flags
 ```
 
 ---
@@ -70,18 +73,18 @@ Browser
 
 | Layer | Technology |
 |---|---|
-| **AI** | OpenRouter — `google/gemini-2.5-flash` |
+| **AI** | OpenRouter — `google/gemini-2.0-flash` |
 | **Database** | Supabase PostgreSQL via asyncpg connection pooler (port 6543, IPv4) |
 | **Frontend** | React 18 · TypeScript · Vite · Tailwind CSS · Zustand · Zod · Recharts |
 | **Backend** | Python 3.11 · FastAPI · Pydantic v2 · slowapi · uvicorn |
-| **Deployment** | Docker (multi-stage) · Render (single unified service) |
-| **CI** | GitHub Actions — lint · typecheck · test · coverage · Docker build + health check |
+| **Deployment** | Render — separate Static Site (frontend) + Web Service (backend) |
+| **CI** | GitHub Actions — lint · typecheck · test · coverage |
 
 ---
 
 ## UI Design
 
-ClimateIQ uses a premium Blueprint Grid design language:
+CarbonNext uses a premium Blueprint Grid design language:
 
 - **Blueprint Grid Background** — subtle animated dot-grid with ambient depth
 - **Bento Card Layouts** — radius hierarchy: 16px cards → 12px panels → 10px inputs/buttons
@@ -95,8 +98,7 @@ ClimateIQ uses a premium Blueprint Grid design language:
 ## Project Structure
 
 ```
-carbon-platform/
-├── Dockerfile                  Multi-stage build (Node → Python)
+carbon-next/
 ├── backend/
 │   ├── app/
 │   │   ├── carbon/             Pure Python emission calculation engine
@@ -105,13 +107,13 @@ carbon-platform/
 │   │   ├── routes/             API endpoint handlers
 │   │   └── services/           OpenRouter, Supabase (asyncpg), Analytics, EventQueue
 │   ├── tests/                  pytest suite (101 tests)
-│   ├── requirements.txt
+│   ├── requirement.txt
 │   └── requirements-dev.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── components/         Calculator, Insights, History, Shared
 │   │   ├── store/              Zustand state management
-│   │   ├── api/                Typed fetch client (relative /api paths)
+│   │   ├── api/                Typed fetch client
 │   │   └── utils/              Formatters and validators
 │   └── tests/                  Vitest + jest-axe suite (57 tests)
 ├── migrations/                 SQL migration files for Supabase
@@ -120,8 +122,7 @@ carbon-platform/
 │   └── 003_event_queue_schema.sql
 ├── docs/                       PRD, Architecture, Judge Evidence
 └── .github/workflows/
-    ├── ci.yml                  Lint · typecheck · test · Docker health check
-    └── deploy.yml              Build verification pipeline
+    └── ci.yml                  Lint · typecheck · test
 ```
 
 ---
@@ -132,8 +133,8 @@ No external services required. All services have in-memory fallbacks.
 
 ```bash
 # 1. Clone
-git clone https://github.com/AbhishekK7860/Promptwars-Challenge-3.git
-cd Promptwars-Challenge-3
+git clone https://github.com/harshitjack/carbon-next.git
+cd carbon-next
 
 # 2. Backend (terminal 1)
 cd backend
@@ -143,7 +144,7 @@ python -m venv .venv
 pip install -r requirements-dev.txt
 
 # Run with all external services disabled (uses in-memory fallbacks)
-$env:USE_OPENROUTER="false"; $env:USE_SUPABASE="false"; $env:USE_FIRESTORE="false"; $env:USE_ANALYTICS="false"; $env:USE_EVENT_QUEUE="false"; uvicorn app.main:app --reload --port 8000
+$env:USE_OPENROUTER="false"; $env:USE_SUPABASE="false"; $env:USE_ANALYTICS="false"; $env:USE_EVENT_QUEUE="false"; uvicorn app.main:app --reload --port 8000
 
 # 3. Frontend (terminal 2)
 cd frontend
@@ -156,14 +157,14 @@ npm run dev      # → http://localhost:5173 (proxies /api to :8000)
 ## Running Tests
 
 ```bash
-# Backend — 101 tests, coverage enforced at ≥90%
+# Backend — pytest with coverage
 cd backend
 pytest --cov=app --cov-report=term -v
 
 # Backend lint
 ruff check .
 
-# Frontend — 57 tests with v8 coverage
+# Frontend — Vitest with v8 coverage
 cd frontend
 npm test
 
@@ -173,35 +174,11 @@ npm run typecheck
 
 ---
 
-## Docker — Local Build & Run
+## Production Deployment — Render (Separate Services)
 
-The Dockerfile is a production-grade multi-stage build:
-- **Stage 1** — Node 20 Alpine: installs npm dependencies and runs `vite build`
-- **Stage 2** — Python 3.11 Slim: installs Python dependencies, copies `frontend/dist` into `backend/static`, runs as a non-root user
-
-```bash
-# Build
-docker build -t climate-iq .
-
-# Run locally (all services disabled for testing)
-docker run -p 8080:8080 \
-  -e USE_OPENROUTER=false \
-  -e USE_SUPABASE=false \
-  -e USE_FIRESTORE=false \
-  -e USE_ANALYTICS=false \
-  -e USE_EVENT_QUEUE=false \
-  -e ENVIRONMENT=development \
-  climate-iq
-
-# Visit http://localhost:8080
-# Health check: http://localhost:8080/api/health
-```
-
----
-
-## Production Deployment — Render (Single Docker Service)
-
-ClimateIQ is deployed as a single Docker container on Render. FastAPI serves the React SPA from `backend/static/` at runtime, eliminating the need for a separate frontend host, CORS configuration, or API proxy rewrites.
+CarbonNext is deployed as two separate Render services:
+- **Backend** — a Python Web Service running FastAPI
+- **Frontend** — a Static Site serving the compiled React/Vite app
 
 ### Step 1: Supabase — Database Setup
 
@@ -220,46 +197,60 @@ Use the **Connection Pooler** URL from your Supabase dashboard (not the direct d
 postgresql://postgres.PROJECT_REF:PASSWORD@aws-0-REGION.pooler.supabase.com:6543/postgres
 ```
 
-### Step 2: Render — Create Web Service
+---
 
-1. New → Web Service → connect your GitHub repository
-2. **Root Directory:** leave blank (`.`)
-3. **Runtime:** Docker (auto-detected from `Dockerfile`)
-4. **Docker Build Context:** `.`
-5. **Dockerfile Path:** `Dockerfile`
-6. **Docker Command:** leave blank (uses `CMD` from Dockerfile)
-7. **Instance Type:** Free or Starter
-8. **Health Check Path:** `/api/health`
+### Step 2: Deploy Backend (Web Service)
 
-### Step 3: Environment Variables
+1. New → **Web Service** → connect your GitHub repository
+2. **Root Directory:** `backend`
+3. **Runtime:** Python 3
+4. **Build Command:** `pip install -r requirement.txt`
+5. **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+6. **Instance Type:** Free
 
-Set these in the Render dashboard → Environment tab:
+**Environment Variables (Backend):**
 
 | Variable | Value |
 |---|---|
 | `ENVIRONMENT` | `production` |
 | `USE_SUPABASE` | `true` |
-| `USE_FIRESTORE` | `true` (backward-compatibility alias for USE_SUPABASE) |
 | `USE_OPENROUTER` | `true` |
-| `USE_GEMINI` | `true` (backward-compatibility alias for USE_OPENROUTER) |
-| `USE_ANALYTICS` | `false` |
-| `USE_BIGQUERY` | `false` |
-| `USE_EVENT_QUEUE` | `false` |
-| `USE_PUBSUB` | `false` |
+| `USE_ANALYTICS` | `true` |
+| `USE_EVENT_QUEUE` | `true` |
 | `OPENROUTER_API_KEY` | *(your OpenRouter API key — mark as Secret)* |
-| `OPENROUTER_MODEL` | `google/gemini-2.5-flash` |
-| `SUPABASE_DB_URL` | *(your pooler URL — mark as Secret, ensure password is URL-encoded)* |
+| `OPENROUTER_MODEL` | `google/gemini-2.0-flash` |
+| `SUPABASE_DB_URL` | *(your pooler URL — mark as Secret)* |
+| `ALLOWED_ORIGINS` | *(your deployed frontend URL, e.g. `https://carbon-next-3.onrender.com`)* |
+| `LOG_LEVEL` | `INFO` |
+| `MAX_HISTORY_ENTRIES` | `20` |
+
+---
+
+### Step 3: Deploy Frontend (Static Site)
+
+1. New → **Static Site** → connect your GitHub repository
+2. **Root Directory:** `frontend`
+3. **Build Command:** `npm install; npm run build`
+4. **Publish Directory:** `dist`
+
+**Environment Variables (Frontend):**
+
+| Variable | Value |
+|---|---|
+| `VITE_API_URL` | *(your deployed backend URL, e.g. `https://carbon-next-2.onrender.com`)* |
+
+> ⚠️ `VITE_API_URL` must be set before the build runs — Vite bakes env vars in at build time.
+
+---
 
 ### Step 4: Verify Deployment
 
-Once the service status turns Live:
-
 ```
-GET  https://climate-iq.onrender.com/api/health
+GET  https://carbon-next-2.onrender.com/api/health
 → {"status":"healthy","services":{"openrouter":true,"supabase":true,...}}
 
-GET  https://climate-iq.onrender.com/
-→ React SPA loads (served by FastAPI from backend/static/)
+GET  https://carbon-next-3.onrender.com/
+→ React SPA loads and connects to the backend
 ```
 
 ---
@@ -293,8 +284,8 @@ JSONB columns (`breakdown`, `ranked_categories`, `insights`) are serialized and 
 - **Security checkpoint**: PII (SSNs, credit-card numbers) is scrubbed from AI prompts; prompt-injection attempts are blocked before reaching the LLM
 - **Security headers**: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy on every response
 - **Rate limiting**: 30/min calculate · 10/min insights · 20/min entries
-- **Non-root Docker user**: Container runs as `appuser`, not root
 - **No secrets in code**: All credentials via environment variables only — see `.env.example`
+- **CORS**: Backend restricts origins to the deployed frontend URL via `ALLOWED_ORIGINS` env var
 
 ---
 
