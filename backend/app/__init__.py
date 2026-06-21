@@ -1,0 +1,1 @@
+"""EcoTracker — backend application package."""

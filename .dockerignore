@@ -1,0 +1,16 @@
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.pytest_cache
+**/.coverage
+**/htmlcov
+**/node_modules
+**/.git
+**/.env
+frontend/coverage
+frontend/.vite
+*.md
+.github
+.vscode
+.idea
+gcloud-service-key.json

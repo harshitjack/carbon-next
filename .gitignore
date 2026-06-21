@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.env.local
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Service account keys and credentials (NEVER commit these)
+*.json
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/.eslintrc.json
+!frontend/tsconfig.json
+!frontend/tsconfig.node.json
+gcloud-service-key.json
+application_default_credentials.json

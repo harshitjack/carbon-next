@@ -1,0 +1,27 @@
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+env = [
+  "USE_OPENROUTER=false",
+  "USE_GEMINI=false",
+  "USE_SUPABASE=false",
+  "USE_FIRESTORE=false",
+  "USE_ANALYTICS=false",
+  "USE_BIGQUERY=false",
+  "USE_EVENT_QUEUE=false",
+  "USE_PUBSUB=false",
+  "ENVIRONMENT=test"
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+fail_under = 90
